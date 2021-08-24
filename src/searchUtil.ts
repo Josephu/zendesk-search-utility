@@ -1,16 +1,16 @@
 import * as fs from 'fs'
 import StreamArray from 'stream-json/streamers/StreamArray';
 
-interface SearchCriteria {
-  dataSource: string
+export interface SearchCriteria {
+  table: string
   field: string
-  value: string
+  value: string | number | boolean
 }
 
 export async function search(searchCriteria: SearchCriteria): Promise<Array<any>> {
   const result:Array<any> = []
   return new Promise((resolve, reject) => {
-    const sourceDataFile = `./data/${searchCriteria['dataSource']}s.json`
+    const sourceDataFile = `./data/${searchCriteria['table']}s.json`
     fs.createReadStream(sourceDataFile)
       .pipe(StreamArray.withParser())
       .on('data', data => {
@@ -24,22 +24,10 @@ export async function search(searchCriteria: SearchCriteria): Promise<Array<any>
   })
 }
 
-function qualify(jsonObject: any, queryKey: string, queryValue: string): boolean {
+function qualify(jsonObject: any, queryKey: string, queryValue: string | number | boolean): boolean {
   const value = jsonObject[queryKey]
   if (Array.isArray(value) === true) {
     return value.includes(queryValue)
   }
-  if (isBoolean(value) || isNumber(value)) {
-    return value.toString() === queryValue
-  }
   return value === queryValue
 }
-
-function isNumber(value: string | number | boolean): boolean {
-  return typeof value === 'number' && isFinite(value)
-}
-
-function isBoolean(value: string | number | boolean): boolean {
-  return typeof value === 'boolean'
-}
-
