@@ -2,7 +2,7 @@
 
 ## Background
 
-This is a simple cli tool that enables user to search through Zendesk data easily.
+This is a simple cli tool that enables user to search through Zendesk JSON formatted data easily.
 
 ## User flow design consideration
 
